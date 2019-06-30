@@ -5,16 +5,16 @@ spring.jpa.show-sql: true
 
 # MongDB settings
 #spring.data.mongodb.uri: mongodb://localhost/local
-spring.data.mongodb.database: local
 spring.data.mongodb.host: localhost
+spring.data.mongodb.port: 27017
 spring.data.mongodb.authentication-database: admin
+spring.data.mongodb.database: local
 spring.data.mongodb.username: local
 spring.data.mongodb.password: local
-spring.data.mongodb.port: 27027
-spring.data.mongodb.repositories.type: auto
+#spring.data.mongodb.repositories.type: auto
 #spring.data.mongodb.field-naming-strategy:
 #spring.data.mongodb.grid-fs-database:
-spring.session.mongodb.collection-name: fileSystemApi
+#spring.session.mongodb.collection-name: fileSystemApi
 
 # LOGGER
 #logging.pattern.console:%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n

@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.bson.types.ObjectId;
 import org.junit.Test;
 
 import net.marco27.api.filesystemapi.domain.FileStructure;
@@ -35,7 +36,7 @@ public class FileSystemApiUtilTest {
 
     @Test
     public void testCreateFileStructure() throws IOException {
-        final FileStructure expected = new FileStructure.Builder(PATH).build();
+        final FileStructure expected = new FileStructure(PATH, null, null, null, Boolean.FALSE, null);
         final FileStructure result = createFileStructure(PATH);
         assertNotEquals(expected, result);
     }

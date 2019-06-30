@@ -8,16 +8,19 @@ import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import net.marco27.api.base.domain.JsonError;
-import net.marco27.api.base.domain.JsonSuccess;
 import net.marco27.api.filesystemapi.domain.FileStructure;
 import net.marco27.api.filesystemapi.domain.PathFileToPrint;
 import net.marco27.api.filesystemapi.service.FileSystemApiService;
-import net.marco27.api.filesystemapi.store.FileSystemApiStore;
+import net.marco27.api.filesystemapi.store.FileSystemRepository;
 import net.marco27.api.filesystemapi.validation.model.ValidationResult;
 import net.marco27.api.filesystemapi.validation.service.ValidationService;
+import reactor.core.publisher.Mono;
 
 /** The main use case for the API is to read the filesystem */
 @RestController
@@ -29,7 +32,7 @@ public class FileSystemApiController {
     @Autowired
     private ValidationService validationService;
     @Autowired
-    private FileSystemApiStore fileSystemApiStore;
+    private FileSystemRepository fileSystemRepository;
 
     @GetMapping("/printPathToFile/{pathToPrint}/{fileToPrint}")
     public ResponseEntity<PathFileToPrint> printPathToFile(@Valid @PathVariable final String pathToPrint,
@@ -56,41 +59,17 @@ public class FileSystemApiController {
     }
 
     @GetMapping("/findFileStructureMongoById/{path}")
-    public ResponseEntity<FileStructure> getPathStructure(@Valid @PathVariable final String path) {
-        final FileStructure result = fileSystemApiStore.findFileStructureById(validatePath(path));
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/findFileStructureMongoByPath/{path}")
-    public ResponseEntity<FileStructure> findPathStructure(@Valid @PathVariable final String path) {
-        FileStructure result = fileSystemApiStore.findFileStructureByPath(validatePath(path));
-        if (result == null) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(result);
-    }
-
-    @DeleteMapping("/deleteFileStructureMongo/{path}")
-    public ResponseEntity<JsonSuccess> deleteFileStructureMongo(@Valid @PathVariable final String path) {
-        FileStructure fileStructure = fileSystemApiStore.findFileStructureByPath(validatePath(path));
-        if (fileStructure != null) {
-            fileSystemApiStore.deleteFileStructure(fileStructure);
-            return ResponseEntity.ok(new JsonSuccess());
-        }
-        return ResponseEntity.ok(new JsonSuccess(String.format("path not found %s", path)));
+    public Mono<FileStructure> findFileStructureMongoById(@Valid @PathVariable final String path) {
+        return fileSystemRepository.findById(validatePath(path));
     }
 
     @GetMapping("/saveFileStructureMongo/{path}")
-    public ResponseEntity<FileStructure> storePathStructure(@Valid @PathVariable final String path) {
+    public Mono<FileStructure> saveFileStructureMongo(@Valid @PathVariable final String path) {
         final String validPath = validatePath(path);
-        FileStructure result = fileSystemApiStore.findFileStructureById(validatePath(validPath));
-        if (result == null) {
-            result = fileSystemApiService.createFileStructure(validPath);
-            if (result != null) {
-                result = fileSystemApiStore.saveFileStructure(result);
-            }
+        final FileStructure fileStructure = fileSystemApiService.createFileStructure(validPath);
+        if (fileStructure != null) {
+            return fileSystemRepository.save(fileStructure);
         }
-        return ResponseEntity.ok(result);
+        return null;
     }
-
 }

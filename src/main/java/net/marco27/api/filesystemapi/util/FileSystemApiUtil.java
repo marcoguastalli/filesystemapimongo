@@ -21,6 +21,7 @@ import java.util.TimeZone;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,15 +82,9 @@ public final class FileSystemApiUtil {
 
         if (isDirectory(inputPath)) {
             final List<FileStructure> children = getFileStructures(inputPath);
-            return new FileStructure.Builder(filePath, fileName, fileExtension)
-                    .isDirectory(Boolean.TRUE)
-                    .withTimestamp(fileModifiedDate)
-                    .addChildren(children).build();
+            return new FileStructure(filePath, fileName, fileExtension, fileModifiedDate, Boolean.TRUE, children);
         } else {
-            return new FileStructure.Builder(filePath, fileName, fileExtension)
-                    .isDirectory(Boolean.FALSE)
-                    .withTimestamp(fileModifiedDate)
-                    .build();
+            return new FileStructure(filePath, fileName, fileExtension, fileModifiedDate, Boolean.FALSE, null);
         }
     }
 

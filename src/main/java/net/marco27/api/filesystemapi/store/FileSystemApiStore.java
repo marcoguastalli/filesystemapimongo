@@ -8,8 +8,8 @@ public interface FileSystemApiStore {
 
     FileStructure findFileStructureByPath(String path);
 
-    FileStructure savePathStructure(FileStructure fileStructure);
+    FileStructure saveFileStructure(FileStructure fileStructure);
 
-    void deletePathStructure(FileStructure fileStructure);
+    void deleteFileStructure(FileStructure fileStructure);
 
 }

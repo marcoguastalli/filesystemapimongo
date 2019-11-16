@@ -15,8 +15,11 @@ mvn clean spring-boot:run
 # swagger
 http://localhost:8090/swagger-ui.html
 
-# oracle
-http://192.168.56.3:8080/apex/
+# MongoDB
+mongo -u local -p local 127.0.0.1:27017 --authenticationDatabase admin
+use local
+show collections
+db.FileStructure.find()
 
 ### play
 http://localhost:8090/

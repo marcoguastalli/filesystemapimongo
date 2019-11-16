@@ -63,6 +63,11 @@ public class FileSystemApiController {
         return fileSystemRepository.findById(validatePath(path));
     }
 
+    @GetMapping("/findFileStructureMongoByPath/{path}")
+    public Mono<FileStructure> findFileStructureMongoByPath(@Valid @PathVariable final String path) {
+        return fileSystemRepository.findByPath(validatePath(path));
+    }
+
     @GetMapping("/saveFileStructureMongo/{path}")
     public Mono<FileStructure> saveFileStructureMongo(@Valid @PathVariable final String path) {
         final String validPath = validatePath(path);

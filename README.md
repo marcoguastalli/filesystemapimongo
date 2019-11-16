@@ -14,6 +14,7 @@ mvn clean spring-boot:run
 
 # swagger
 http://localhost:8090/swagger-ui.html
+Users/marco27/temp -> INVALID 1st Slash
 
 # MongoDB
 mongo -u local -p local 127.0.0.1:27017 --authenticationDatabase admin

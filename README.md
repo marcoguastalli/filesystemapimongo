@@ -8,9 +8,6 @@ mvn clean integration-test
 #run
 mongod --dbpath /Users/marco27/opt/MongoDB/m27data/db --auth
 mongod --dbpath /Users/marcoguastalli/opt/MongoDB/m27data/db --auth
-mongo -u local -p local 127.0.0.1:27017 --authenticationDatabase admin
-use local
-show collections
 mvn clean spring-boot:run
 
 # swagger

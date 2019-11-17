@@ -12,9 +12,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 import static net.marco27.api.base.ApiConstants.SLASH;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -60,17 +60,18 @@ public class FileSystemApiController {
     }
 
     @GetMapping("/findFileStructureMongoById/{path}")
-    public Mono<FileStructure> findFileStructureMongoById(@Valid @PathVariable final String path) {
-        return fileSystemRepository.findById(validatePath(path));
+    public FileStructure findFileStructureMongoById(@Valid @PathVariable final String path) {
+        Optional<FileStructure> fileStructureById = fileSystemRepository.findById(validatePath(path));
+        return fileStructureById.orElse(null);
     }
 
     @GetMapping("/findFileStructureMongoByPath/{path}")
-    public Mono<FileStructure> findFileStructureMongoByPath(@Valid @PathVariable final String path) {
+    public FileStructure findFileStructureMongoByPath(@Valid @PathVariable final String path) {
         return fileSystemRepository.findByPath(validatePath(path));
     }
 
-    @GetMapping("/saveFileStructureMongo/{path}")
-    public Mono<FileStructure> saveFileStructureMongo(@Valid @PathVariable final String path) {
+    @PostMapping("/saveFileStructureMongo/{path}")
+    public FileStructure saveFileStructureMongo(@Valid @PathVariable final String path) {
         final String validPath = validatePath(path);
         final FileStructure fileStructure = fileSystemApiService.createFileStructure(validPath);
         if (fileStructure != null) {
@@ -81,9 +82,9 @@ public class FileSystemApiController {
 
     @DeleteMapping("/deleteFileStructureMongo/{path}")
     public ResponseEntity<JsonSuccess> deleteFileStructureMongo(@Valid @PathVariable final String path) {
-        final String validatedPath = validatePath(path);
-        Mono<FileStructure> fileStructureMono = fileSystemRepository.findById(validatedPath);
-        fileStructureMono.then(fileSystemRepository.delete(fileStructureMono.block()).then(fileStructureMono));
+        final String validPath = validatePath(path);
+        final Optional<FileStructure> fileStructureById = fileSystemRepository.findById(validPath);
+        fileStructureById.ifPresent(fileStructure -> fileSystemRepository.delete(fileStructure));
         return ResponseEntity.ok(new JsonSuccess());
     }
 }
